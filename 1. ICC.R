@@ -1,38 +1,22 @@
-library(fdir)
+# install.packages('remotes')
+# install.packages('ggplot2')
+# remotes::install_github('blimp-stats/rblimp')
+
+# load packages
 library(rblimp)
 library(ggplot2)
 
-# set the working directory to the folder that contains this script and load the data
-set()
-
 # load data
-load("Pain Diary Data.RData")
+connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
+load(connect); close(connect)
 
-################################################################
-# box plots to display raw data
-################################################################
+# load misc functions
+source("https://raw.githubusercontent.com/craigenders/mlm/main/mlm-functions.R")
 
-# subset the data to select first 20 level-2 identifiers for graphing
-ids2plot <- unique(PainDiary$Person)[1:20]
-data2plot <- subset(PainDiary, Person %in% ids2plot)
-mean(data2plot$PosAffect)
+# boxplots of raw data by cluster
+boxplots_by_cluster(data = PainDiary, var2plot = "PosAffect", lev2id = "Person", numboxes = 20)
 
-# plot the scores with jitter and add the mean for each person as a orange dot
-ggplot(data2plot, aes(x = factor(Person), y = PosAffect)) +
-  geom_boxplot(width = 0.3, outlier.shape = NA, fill = NA, color = "grey") +
-  geom_jitter(width = 0.1, height = 0, size = 2, alpha = 0.6) +
-  stat_summary(fun = mean, geom = "point", color = "red", size = 4) +
-  scale_y_continuous(limits = c(2, 8), breaks = c(2,4,6,8)) +
-  labs(x = "Person", y = "Positive Affect",
-  title = "Positive Affect Scores by Cluster") +
-  theme_minimal()
-
-################################################################
-# estimate icc
-################################################################
-
-# empty model to estimate icc
-# combined-model specification
+# empty model to estimate icc (combined-model specification)
 model1 <- rblimp(
   data = PainDiary,
   clusterid = 'Person',
@@ -43,8 +27,7 @@ model1 <- rblimp(
 )
 output(model1)
 
-# empty model to estimate icc
-# alternate level-1 and level-2 latent variable specification
+# empty model to estimate icc (alternate level-1 and level-2 latent variable specification)
 model2 <- rblimp(
   data = PainDiary,
   clusterid = 'Person',
