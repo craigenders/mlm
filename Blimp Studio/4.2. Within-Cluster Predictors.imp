@@ -1,9 +1,0 @@
-DATA: PainDiary.dat;
-VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual  Female Education 
-   Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
-CLUSTERID: Person;
-CENTER: groupmean = SleepQual Pain;    # cwc with level-2 latent cluster means
-MODEL: PosAffect ~ intercept SleepQual Pain | intercept;
-BURN: 10000;
-ITER: 20000;
-SEED: 90291;

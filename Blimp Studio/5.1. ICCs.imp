@@ -1,9 +1,0 @@
-DATA: EmployeeSatisfaction.dat;
-VARIABLES: Employee Team Turnover Male Empower LMX JobSat Climate TeamPerf;
-CLUSTERID: Team;  
-NOMINAL: Male;    # invokes logistic regression model
-MODEL: 
-{ JobSat LMX Empower Male } ~ intercept | intercept;    # { } applies the same model all all variables
-BURN: 20000;
-ITERATIONS: 10000;
-SEED: 90291;

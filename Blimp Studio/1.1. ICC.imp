@@ -1,8 +1,0 @@
-DATA: PainDiary.dat;
-VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual 
-  Female Education Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
-CLUSTERID: Person;     # level-2 identifier invokes random intercepts
-MODEL: PosAffect ~ intercept | intercept;     # coefficients | random effects
-BURN: 10000;
-ITER: 20000;
-SEED: 90291;
