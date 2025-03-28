@@ -11,7 +11,7 @@ library(lavaan)
 library(rblimp)
 
 # load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/rBlimp/PainDiaryData.RData", "rb")
+connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
 load(connect); close(connect)
 
 # within-cluster (group mean) center sleep quality and add cluster-specific arithmetic group means to the data

@@ -7,7 +7,7 @@ library(rblimp)
 library(ggplot2)
 
 # load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/rBlimp/PainDiaryData.RData", "rb")
+connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
 load(connect); close(connect)
 
 # load misc functions
