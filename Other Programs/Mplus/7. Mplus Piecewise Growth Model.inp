@@ -1,0 +1,22 @@
+DATA: 
+file = SchizophreniaTrial.dat;
+VARIABLE: 
+names = Participant Week Drug Male Severity;
+usevariables = Severity WeekEp1 WeekEp2;
+cluster = Participant;
+within = WeekEp1 WeekEp2;
+DEFINE:
+WeekEp1 = 0;
+WeekEp2 = 0;
+if Week eq 1 then WeekEp1 = -1;
+if Week eq 4 then WeekEp2 = 2;
+if Week eq 7 then WeekEp2 = 5;
+ANALYSIS:
+type = twolevel random;
+MODEL:
+%within%
+slpEp1 slpEp2 | Severity on WeekEp1 WeekEp2;
+%between%
+Severity slpEp1 slpEp2;
+[Severity slpEp1 slpEp2];
+Severity slpEp1 slpEp2 with Severity slpEp1 slpEp2;
