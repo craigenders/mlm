@@ -1,0 +1,14 @@
+DATA: EmployeeSatisfaction.dat;
+VARIABLES: Employee Team Turnover Male Empower LMX JobSat Climate TeamPerf;
+NOMINAL: Male; 
+CLUSTERID: Team;  
+LATENT: Team = beta0j beta2j;    # define random intercept and slope
+CENTER: groupmean = LMX Empower; grandmean = Male LMX.mean Empower.mean;  
+MODEL:
+beta0j ~ intercept LMX.mean Empower.mean;
+beta2j ~ intercept;
+beta0j ~~ beta2j;    # correlate random intercepts and slopes
+JobSat ~ intercept@beta0j LMX Empower@beta2j Male;
+BURN: 20000;
+ITERATIONS: 30000;
+SEED: 90291;

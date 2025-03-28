@@ -1,0 +1,13 @@
+DATA: PainDiary.dat;
+VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual Female Education 
+   Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
+CLUSTERID: Person; 
+LATENT: Person = beta0j;  # define level-2 intercept latent variable
+MODEL: 
+beta0j ~ intercept;  # level-2 regression equation (β0j = γ00 + u0j)
+PosAffect ~ intercept@beta0j;  # level-1 equation (paffectij = β0j + εij)
+PARAMETERS: 
+icc = beta0j.totalvar / (beta0j.totalvar + PosAffect.totalvar);
+BURN: 10000;
+ITER: 20000;
+SEED: 90291;

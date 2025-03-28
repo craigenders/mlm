@@ -1,0 +1,12 @@
+DATA: PainDiary.dat;
+VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual  Female Education 
+   Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
+CLUSTERID: Person;     
+CENTER:  
+grandmean = SleepQual.mean Pain.mean; 
+groupmean = SleepQual Pain;  
+MODEL: PosAffect ~ SleepQual Pain SleepQual.mean@b3 Pain.mean@b4;    # @ labels slopes
+WALDTEST: b3:b4 = 0;    # test nested model where b3 and b4 equal 0
+BURN: 10000;
+ITERATIONS: 20000;
+SEED: 90291;
