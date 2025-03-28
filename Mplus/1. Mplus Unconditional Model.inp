@@ -1,0 +1,17 @@
+DATA:
+file = PainDiary.dat;
+VARIABLE:
+names = participant day posaffect negaffect pain workgoal lifegoal sleepqual 
+	female education employment marstatus numdiagnose activitylevel 
+	painaccept catastrophize stress anxiety;
+usevariables = posaffect;
+cluster = participant;
+ANALYSIS:
+type = twolevel;
+estimator = mlr;
+MODEL:
+%within%
+posaffect;
+%between%
+[posaffect]; 
+posaffect;
