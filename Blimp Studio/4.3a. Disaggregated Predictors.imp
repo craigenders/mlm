@@ -1,0 +1,11 @@
+DATA: PainDiary.dat;
+VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual  Female Education
+   Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
+CLUSTERID: Person;     
+CENTER:  
+grandmean = SleepQual.mean Pain.mean;
+groupmean = SleepQual Pain;
+MODEL: PosAffect ~ intercept SleepQual Pain SleepQual.mean Pain.mean | intercept; 
+BURN: 10000;
+ITERATIONS: 20000;
+SEED: 90291;
