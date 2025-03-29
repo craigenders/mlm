@@ -7,13 +7,14 @@ library(rblimp)
 library(ggplot2)
 
 # load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/rBlimp/PainDiaryData.RData", "rb")
+connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
 load(connect); close(connect)
 
-# load misc functions
+# load functions
 source("https://raw.githubusercontent.com/craigenders/mlm/main/mlm-functions.R")
+source("https://raw.githubusercontent.com/craigenders/rblimp-adds/main/rblimp-functions.R")
 
-# boxplots of raw data by cluster
+# boxplots of raw data by cluster using boxplots_by_cluster function
 boxplots_by_cluster(data = PainDiary, var2plot = "PosAffect", lev2id = "Person", numboxes = 20)
 boxplots_by_cluster(data = PainDiary, var2plot = "SleepQual", lev2id = "Person", numboxes = 20)
 boxplots_by_cluster(data = PainDiary, var2plot = "Pain", lev2id = "Person", numboxes = 20)
@@ -47,6 +48,9 @@ model2 <- rblimp(
   iter = 20000)
 output(model2)
 
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model2, var = "PosAffect")
+
 # disaggregated model with within-person and between-person sleep as a predictor
 model3a <- rblimp(
   data = PainDiary,
@@ -57,6 +61,9 @@ model3a <- rblimp(
   burn = 10000,
   iter = 20000)
 output(model3a)
+
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model3a, var = "PosAffect")
 
 # test whether level-2 slopes differ from zero (model2 vs. model1)
 model3b <- rblimp(
@@ -94,7 +101,10 @@ model4a <- rblimp(
   iter = 20000)
 output(model4a)
 
-# add level-2 predictors
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model4a, var = "PosAffect")
+
+# test whether level-2 slopes differ from zero
 model4b <- rblimp(
   data = PainDiary,
   nominal = 'Female',

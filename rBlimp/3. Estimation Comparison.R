@@ -14,6 +14,9 @@ library(rblimp)
 connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
 load(connect); close(connect)
 
+# load functions
+source("https://raw.githubusercontent.com/craigenders/rblimp-adds/main/rblimp-functions.R")
+
 # within-cluster (group mean) center sleep quality and add cluster-specific arithmetic group means to the data
 PainDiary <- gmc(PainDiary, c("SleepQual"), by = c("Person"), FUN = mean, suffix = c(".meanj", ".w"), fulldataframe = T)
 
@@ -56,3 +59,6 @@ mcmc <- rblimp(
   burn = 10000,
   iter = 20000)
 output(mcmc)
+
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(mcmc, var = "PosAffect")

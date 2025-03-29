@@ -12,9 +12,9 @@ load(connect); close(connect)
 
 # load misc functions
 source("https://raw.githubusercontent.com/craigenders/mlm/main/mlm-functions.R")
-source("https://raw.githubusercontent.com/craigenders/rblimp-adds/main/ChiBarWaldTest.R")
+source("https://raw.githubusercontent.com/craigenders/rblimp-adds/main/rblimp-functions.R")
 
-# boxplots of raw data by cluster
+# boxplots of raw data by cluster using boxplots_by_cluster function
 boxplots_by_cluster(data = Employee, var2plot = "JobSat", lev2id = "Team", numboxes = 20)
 boxplots_by_cluster(data = Employee, var2plot = "Empower", lev2id = "Team", numboxes = 20)
 boxplots_by_cluster(data = Employee, var2plot = "LMX", lev2id = "Team", numboxes = 20)
@@ -47,6 +47,9 @@ model2 <- rblimp(
   iter = 20000)
 output(model2)
 
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model2, var = "JobSat")
+
 # add random slope for lmx
 model3 <- rblimp(
   data = Employee,
@@ -59,8 +62,11 @@ model3 <- rblimp(
   iter = 20000)
 output(model3)
 
-# test random slope variance
-chibar_test_slopes(model3, testvars = c("LMX"))
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model3, var = "JobSat")
+
+# test random slope variance using the chibar_test function
+chibar_test(model3, raneff = c("LMX"))
 
 # add random slope for empowerment
 model4 <- rblimp(
@@ -74,8 +80,11 @@ model4 <- rblimp(
   iter = 20000)
 output(model4)
 
-# test random slope variance
-chibar_test_slopes(model4, testvars = c("Empower"))
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model4, var = "JobSat")
+
+# test random slope variance using the chibar_test function
+chibar_test(model4, raneff = c("Empower"))
 
 # add both random slopes
 model5 <- rblimp(
@@ -89,8 +98,11 @@ model5 <- rblimp(
   iter = 20000)
 output(model5)
 
-# test random slope variances
-chibar_test_slopes(model5, testvars = c("LMX","Empower"))
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model5, var = "JobSat")
+
+# test random slope variance using the chibar_test function
+chibar_test(model5, raneff = c("LMX","Empower"))
 
 # final model
 model6 <- rblimp(
@@ -104,7 +116,10 @@ model6 <- rblimp(
   iter = 30000)
 output(model6)
 
-# latent variable specification for final model
+# plot parameter distributions using plot_posteriors function
+plot_posteriors(model6, var = "JobSat")
+
+# alternate level-1 and level-2 latent variable specification for final model
 model7 <- rblimp(
   data = Employee,
   nominal = 'Male',
