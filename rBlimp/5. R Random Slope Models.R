@@ -51,6 +51,9 @@ model2 <- rblimp(
 output(model2)
 posterior_plot(model2,'JobSat')
 
+# plot ols lmx slopes
+slopes_by_cluster(data = Employee, y = 'JobSat', x = 'LMX', lev2id = 'Team', numlines = 50)
+
 # add random slope for lmx
 model3 <- rblimp(
   data = Employee,
@@ -68,6 +71,9 @@ posterior_plot(model3,'JobSat')
 
 # test random slope variance using the chibar_test function
 chibar_test(model3, raneff = c('LMX'))
+
+# plot ols empowerment slopes
+slopes_by_cluster(data = Employee, y = 'JobSat', x = 'Empower', lev2id = 'Team', numlines = 50)
 
 # add random slope for empowerment
 model4 <- rblimp(
