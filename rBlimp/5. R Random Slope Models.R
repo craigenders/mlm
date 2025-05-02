@@ -1,3 +1,4 @@
+# install.packages('remotes')
 # install.packages('ggplot2')
 # remotes::install_github('blimp-stats/rblimp')
 
