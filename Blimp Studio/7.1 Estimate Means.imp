@@ -1,0 +1,9 @@
+DATA: SchizophreniaTrial.dat;
+VARIABLES: person week drug male severity;
+CLUSTERID: person;
+MISSING: 999; 
+MODEL: 
+severity ~ intercept@0 (week==1) (week==2) (week==4) (week==7) | intercept;  # dummy codes
+BURN: 20000;
+ITERATIONS: 10000;
+SEED: 90291;

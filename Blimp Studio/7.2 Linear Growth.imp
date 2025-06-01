@@ -1,0 +1,10 @@
+DATA: SchizophreniaTrial.dat;
+VARIABLES: person week drug male severity;
+CLUSTERID: person;
+MISSING: 999; 
+TRANSFORM: time = week – 2;   # compute temporal predictor
+MODEL: 
+severity ~ intercept time | intercept time; 
+BURN: 10000;
+ITERATIONS: 20000;
+SEED: 90291;
