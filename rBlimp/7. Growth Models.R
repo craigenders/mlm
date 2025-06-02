@@ -27,11 +27,12 @@ model1 <- rblimp(
 output(model1)
 posterior_plot(model1,'Severity')
 
-# plot means
+# extract means from estimates object (always starting in 3rd row and first column)
 means <- model1@estimates[3:6,1] # extract means
-waves <- c(1,2,4,7) # specify values for measurement occasions
+waves <- c(1,2,4,7) # specify values of the measurement occasions
 means <- as.data.frame(cbind(waves,means))
 
+# plot means
 ggplot(means, aes(x = waves, y = means)) +
   geom_line() +     
   geom_point() +
