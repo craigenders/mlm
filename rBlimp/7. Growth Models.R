@@ -27,6 +27,16 @@ model1 <- rblimp(
 output(model1)
 posterior_plot(model1,'Severity')
 
+# plot means
+means <- model1@estimates[3:6,1] # extract means
+waves <- c(1,2,4,7) # specify values for measurement occasions
+means <- as.data.frame(cbind(waves,means))
+
+ggplot(means, aes(x = waves, y = means)) +
+  geom_line() +     
+  geom_point() +
+  labs(x = "Week",y = "Severity",title = "Line Plot of Means")
+
 # linear growth model
 model2 <- rblimp(
   data = ClinicalTrial,
