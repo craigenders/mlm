@@ -50,13 +50,18 @@ model2 <- rblimp(
 # print output
 output(model2)
 
-# get variable names from the imputed data sets
+# names of variables in imputed data
 names(model2)
 
-# plot multiply imputed residuals
+pdf('~/desktop/univariate_plots.pdf', width = 11, height = 8.5)
+
+# plot distributions and residuals
 univariate_plot(vars = c('PosAffect[Person]','PosAffect.residual'), 
                 model = model2,
-                stats = T)
+                stats = T,
+                fill_color = "#D95C14")
+
+dev.off()
 
 #------------------------------------------------------------------------------#
 # LATENT VARIABLE SPECIFICATION (MLSEM) ----
@@ -74,7 +79,7 @@ model3 <- rblimp(
   seed = 90291,
   burn = 10000,
   iter = 20000
-)
+)\
 
 # print output
 output(model3)

@@ -1,26 +1,25 @@
-# install.packages('remotes')
-# install.packages('ggplot2')
-# remotes::install_github('blimp-stats/rblimp')
+#------------------------------------------------------------------------------#
+# LOAD R PACKAGES ----
+#------------------------------------------------------------------------------#
 
 # load packages
 library(rblimp)
 library(ggplot2)
 
+#------------------------------------------------------------------------------#
+# READ DATA ----
+#------------------------------------------------------------------------------#
+
 # load data
 connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
 load(connect); close(connect)
 
-# load functions
-source("https://raw.githubusercontent.com/craigenders/mlm/main/mlm-functions.R")
+# plotting functions
+source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')
 
-# boxplots of raw data by cluster using boxplots_by_cluster function
-boxplots_by_cluster(data = PainDiary, var2plot = "PosAffect", lev2id = "Person", numboxes = 20)
-boxplots_by_cluster(data = PainDiary, var2plot = "SleepQual", lev2id = "Person", numboxes = 20)
-boxplots_by_cluster(data = PainDiary, var2plot = "Pain", lev2id = "Person", numboxes = 20)
-
-################################################################
-# combined-model specification
-################################################################
+#------------------------------------------------------------------------------#
+# COMBINED MODEL SPECIFICATION ----
+#------------------------------------------------------------------------------#
 
 # estimate icc for each variable
 model1 <- rblimp(
@@ -35,7 +34,7 @@ model1 <- rblimp(
   iter = 20000
 )
 
-# summarize results
+# print output
 output(model1)
 
 # within-person sleep as a predictor
@@ -48,9 +47,8 @@ model2 <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results and plot parameter distributions
+# print output
 output(model2)
-posterior_plot(model2, 'PosAffect')
 
 # disaggregated model with within-person and between-person sleep as a predictor
 model3a <- rblimp(
@@ -62,9 +60,8 @@ model3a <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results and plot parameter distributions
+# print output
 output(model3a)
-posterior_plot(model3a, 'PosAffect')
 
 # test whether level-2 slopes differ from zero (model2 vs. model1)
 model3b <- rblimp(
@@ -77,7 +74,7 @@ model3b <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results
+# print output
 output(model3b)
 
 # test whether level-2 slopes differ from level-1 slopes (model2 vs. smushed model)
@@ -91,7 +88,7 @@ seed = 90291,
 burn = 10000,
 iter = 20000)
 
-# summarize results
+# print output
 output(model3c)
 
 # add level-2 predictors
@@ -105,9 +102,8 @@ model4a <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results and plot parameter distributions
+# print output
 output(model4a)
-posterior_plot(model4a, 'PosAffect')
 
 # test whether level-2 slopes differ from zero
 model4b <- rblimp(
@@ -121,12 +117,12 @@ model4b <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results
+# print output
 output(model4b)
 
-################################################################
-# alternate level-1 and level-2 latent variable specification
-################################################################
+#------------------------------------------------------------------------------#
+# LATENT VARIABLE SPECIFICATION (MLSEM) ----
+#------------------------------------------------------------------------------#
 
 # within-person sleep as a predictor
 model5 <- rblimp(
@@ -141,9 +137,8 @@ model5 <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results and plot parameter distributions
+# print output
 output(model5)
-posterior_plot(model5)
 
 # disaggregated model with within-person and between-person sleep as a predictor
 model6 <- rblimp(
@@ -158,9 +153,8 @@ model6 <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results and plot parameter distributions
+# print outputns
 output(model6)
-posterior_plot(model6)
 
 # add level-2 predictors
 model7 <- rblimp(
@@ -176,6 +170,5 @@ model7 <- rblimp(
   burn = 10000,
   iter = 20000)
 
-# summarize results and plot parameter distributions
+# print output
 output(model7)
-posterior_plot(model7)
