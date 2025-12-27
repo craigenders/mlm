@@ -3,16 +3,18 @@
 #------------------------------------------------------------------------------#
 
 # load packages
-library(rblimp)
 library(ggplot2)
+library(rblimp)
 
 #------------------------------------------------------------------------------#
 # READ DATA ----
 #------------------------------------------------------------------------------#
 
-# load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
-load(connect); close(connect)
+# github url for raw data
+filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/PainDiary.csv'
+
+# create data frame from github data
+PainDiary <- read.csv(filepath, stringsAsFactors = T)
 
 # plotting functions
 source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')

@@ -12,15 +12,17 @@ library(rockchalk)
 # READ DATA ----
 #------------------------------------------------------------------------------#
 
-# load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/PainDiaryData.RData", "rb")
-load(connect); close(connect)
+# github url for raw data
+filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/PainDiary.csv'
+
+# create data frame from github data
+PainDiary <- read.csv(filepath, stringsAsFactors = T)
 
 # plotting functions
 source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')
 
 #------------------------------------------------------------------------------#
-# GROUP MEAN CENTER FOR FIML/REML  ----
+# GROUP MEAN CENTER FOR FIML AND REML  ----
 #------------------------------------------------------------------------------#
 
 # within-cluster (group mean) center sleep quality and add cluster-specific arithmetic group means to the data
