@@ -89,6 +89,10 @@ univariate_plot(vars = c('PosAffect[Person]','PosAffect.residual'),
                 model = model2,
                 stats = T)
 
+# plot standardized residuals vs. predictors (check for linearity)
+bivariate_plot(PosAffect.residual ~ SleepQual, standardize = 'y', model = model2)
+bivariate_plot(PosAffect[Person] ~ SleepQual.mean[Person], standardize = 'y', model = model2)
+
 #------------------------------------------------------------------------------#
 # HETEROGENEOUS VARIATION MODEL ----
 #------------------------------------------------------------------------------#
