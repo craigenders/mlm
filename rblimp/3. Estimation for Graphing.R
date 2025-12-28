@@ -90,13 +90,31 @@ univariate_plot(vars = c('PosAffect[Person]','PosAffect.residual'),
                 stats = T)
 
 # plot standardized residuals vs. predictors (check for linearity)
-bivariate_plot(PosAffect.residual ~ SleepQual, 
-               model = model2,
-               standardize = 'y')
+bivariate_plot(PosAffect.residual ~ SleepQual, standardize = 'y', model = model2)
+bivariate_plot(PosAffect[Person] ~ SleepQual.mean[Person], standardize = 'y', model = model2)
 
-bivariate_plot(PosAffect[Person] ~ SleepQual.mean[Person], 
-               model = model2,
-               standardize = 'y')
+pdf('~/desktop/residual_plots.pdf', width = 11, height = 8.5)
+
+bivariate_plot(
+  PosAffect.residual ~ SleepQual, 
+  standardize = 'y', 
+  model = model2,
+  point_color = "#439A9D",    # Orange dots (instead of default blue)
+  curve_color = "#D95C14",    # Orange line (instead of default red)
+  band_fill = "#D95C14"       # Teal/cyan CI band
+)
+
+bivariate_plot(
+  PosAffect[Person] ~ SleepQual.mean[Person], 
+  standardize = 'y', 
+  model = model2,
+  point_color = "#439A9D",    # Orange dots (instead of default blue)
+  curve_color = "#D95C14",    # Orange line (instead of default red)
+  band_fill = "#D95C14"       # Teal/cyan CI band
+)
+
+dev.off()
+
 
 #------------------------------------------------------------------------------#
 # HETEROGENEOUS VARIATION MODEL ----
