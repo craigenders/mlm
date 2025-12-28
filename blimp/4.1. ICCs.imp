@@ -2,10 +2,7 @@ DATA: PainDiary.dat;
 VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual Female Education 
    Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
 CLUSTERID: Person;  
-MODEL: 
-PosAffect ~ intercept | intercept;    # empty model for outcome
-SleepQual ~ intercept | intercept;    # empty model for predictor
-Pain ~ intercept | intercept;    # empty model for predictor 
+MODEL: { PosAffect SleepQual Pain } ~ intercept | intercept;    # empty model for all variables in { }
 BURN: 10000;
-ITERATIONS: 20000;
+ITERATIONS: 10000;
 SEED: 90291;
