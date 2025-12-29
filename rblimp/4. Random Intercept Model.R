@@ -23,7 +23,7 @@ source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/funct
 # ESTIMATE ICCS ----
 #------------------------------------------------------------------------------#
 
-# estimate icc for each variable
+# estimate icc for each level-1 variable
 model1 <- rblimp(
   data = PainDiary,
   clusterid = 'Person',
