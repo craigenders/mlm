@@ -1,3 +1,63 @@
+#------------------------------------------------------------------------------#
+# LOAD R PACKAGES ----
+#------------------------------------------------------------------------------#
+
+# load packages
+library(ggplot2)
+library(rblimp)
+
+#------------------------------------------------------------------------------#
+# READ DATA ----
+#------------------------------------------------------------------------------#
+
+# github url for raw data
+filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/Employee.csv'
+
+# create data frame from github data
+Employee <- read.csv(filepath, stringsAsFactors = T)
+
+# plotting functions
+source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')
+
+#------------------------------------------------------------------------------#
+# ESTIMATE ICCS ----
+#------------------------------------------------------------------------------#
+
+# estimate icc for each variable
+model1 <- rblimp(
+  data = PainDiary,
+  clusterid = 'Person',
+  model = '{ PosAffect SleepQual Pain } ~ intercept | intercept;',
+  seed = 90291,
+  burn = 10000,
+  iter = 10000
+)
+
+# print output
+output(model1)
+
+#------------------------------------------------------------------------------#
+# WITHIN-CLUSTER PREDICTORS ----
+#------------------------------------------------------------------------------#
+
+# within-person predictors and latent group mean centering
+model2 <- rblimp(
+  data = PainDiary,
+  clusterid = 'Person', 
+  center = 'groupmean = SleepQual Pain',  
+  model = 'PosAffect ~ intercept SleepQual Pain | intercept',   
+  seed = 90291,
+  burn = 10000,
+  iter = 10000)
+
+# print output
+output(model2)
+
+
+
+
+
+
 # install.packages('remotes')
 # install.packages('ggplot2')
 # remotes::install_github('blimp-stats/rblimp')
