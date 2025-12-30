@@ -1,0 +1,9 @@
+DATA: Employee.dat;
+VARIABLES: Employee Team Turnover Male Empower LMX JobSat Climate TeamPerf;
+NOMINAL: Male;    # automatic dummy coding for nominal predictors
+CLUSTERID: Team;   
+CENTER: groupmean = LMX; grandmean = LMX.mean Climate;  
+MODEL: Empower ~ intercept LMX Male LMX.mean Climate | intercept LMX; 
+BURN: 10000;
+ITERATIONS: 10000;
+SEED: 90291;

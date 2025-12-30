@@ -1,0 +1,338 @@
+
+---------------------------------------------------------------------------
+
+                                   Blimp
+                                   4.0.0
+
+             Blimp was developed with funding from Institute of
+           Education Sciences awards R305D150056 and R305D190002.
+
+            Craig K. Enders, P.I. Email: cenders@psych.ucla.edu
+           Brian T. Keller, Co-P.I. Email: btkeller@missouri.edu
+                 Han Du, Co-P.I. Email: hdu@psych.ucla.edu
+                 Roy Levy, Co-P.I. Email: roy.levy@asu.edu
+
+              Programming and Blimp Studio by Brian T. Keller
+
+                   There is no expressed license given.
+
+---------------------------------------------------------------------------
+
+
+ALGORITHMIC OPTIONS SPECIFIED:
+
+  Imputation method:                 Fully Bayesian model-based
+  MCMC algorithm:                    Full conditional Metropolis sampler with
+                                       Auto-Derived Conditional Distributions
+  Default Priors:
+    Multilevel covariance matrices:  Zero matrix, df = -(p + 1) (PRIOR2)
+    Outcome covariance matrices:     Zero matrix, df = -(p + 1) (PRIOR2)
+    Predictor model variances:       Unit sum of squares, df = 2 (XPRIOR1)
+  Chain Starting Values:             Random starting values
+
+
+  NOTE: The default prior for regression coefficients 
+        in categorical models is 'normal( 0.0, 5.0)'
+
+  NOTE: For complete list of priors include 'pinfo' in the options.
+
+  NOTE: The following nominal variables have automatically
+        been assigned a reference group.
+
+          'Male' with reference value '0'
+
+        To change reference group use the following command:
+          NOMINAL: variable_name(reference_value);
+
+
+BURN-IN POTENTIAL SCALE REDUCTION (PSR) OUTPUT:
+
+  NOTE: Split chain PSR is being used. This splits each chain's
+        iterations to create twice as many chains.
+
+  Comparing iterations across 2 chains     Highest PSR   Parameter #  
+                          251 to 500             1.283            33  
+                          501 to 1000            1.092            25  
+                          751 to 1500            1.237             5  
+                         1001 to 2000            1.345            25  
+                         1251 to 2500            1.058            33  
+                         1501 to 3000            1.053             3  
+                         1751 to 3500            1.112             3  
+                         2001 to 4000            1.069             3  
+                         2251 to 4500            1.037             8  
+                         2501 to 5000            1.077             3  
+                         2751 to 5500            1.026             5  
+                         3001 to 6000            1.016             2  
+                         3251 to 6500            1.020            25  
+                         3501 to 7000            1.063             5  
+                         3751 to 7500            1.068            25  
+                         4001 to 8000            1.043             7  
+                         4251 to 8500            1.025             5  
+                         4501 to 9000            1.028             5  
+                         4751 to 9500            1.039             5  
+                         5001 to 10000           1.051             5  
+
+
+METROPOLIS-HASTINGS ACCEPTANCE RATES:
+
+  Chain 1:
+
+    Variable                            Type    Probability   Target Value 
+    LMX                           latent imp          0.487          0.500 
+    LMX                            parameter          0.511          0.500 
+    Climate                        parameter          0.456          0.500 
+
+  NOTE: Suppressing printing of 1 chains.
+        Use keyword 'tuneinfo' in options to override.
+
+
+DATA INFORMATION:
+
+  Level-2 identifier:       Team
+  Sample Size:              630
+  Level-2 Clusters:         105
+  Nominal Dummy Codes:
+
+                     Male = Male.1
+  Missing Data Info:
+
+                      Pattern #:       1
+                          miss % --------
+                  Empower =  0.0       -  
+                     Male =  0.0       -  
+                      LMX =  0.0       -  
+                  Climate =  0.0       -  
+                                 --------
+                                 % 100.0
+
+
+MODEL INFORMATION:
+
+  NUMBER OF PARAMETERS
+    Outcome Models:         9
+    Predictor Models:       10
+
+  PREDICTORS
+    Complete continuous:    LMX Climate
+    Complete nominal:       Male
+
+  FACTORS
+    Level-2:                beta0j beta1j
+
+  CENTERED PREDICTORS
+    Grand Mean Centered:    Climate
+    Group Mean Centered:    LMX
+
+  LATENT CLUSTER MEANS
+    Grand Mean Centered:    LMX
+
+  MODELS
+    [1]  beta0j ~ Intercept LMX.mean[Team] Climate
+    [2]  beta1j ~ Intercept
+    [3]  Empower ~ beta0j@1 Male.1 LMX*beta1j@1
+    [4]  beta0j <-> beta1j
+
+
+WARNING MESSAGES:
+
+  WARNING: Excluding the following variables as predictors at the listed level.
+           Their latent cluster means will not be estimated at the listed level.
+  
+             Variable "Male.1" excluded from level-2.
+  
+           These variables are orthogonal to all variables at that level
+           (e.g., because they lack variation at that level).
+
+
+MODEL FIT:
+
+
+  INFORMATION CRITERIA
+
+    Conditional Likelihood
+      DIC2                  3831.995
+      WAIC                  3906.815
+
+
+IMPUTED DATA SUMMARIES:
+
+  NOTE: Imputed data summaries are averaged across 10000 data sets.
+
+
+Variables                              Mean     StdDev        25%        50%        75%        Min        Max 
+                                ------------------------------------------------------------------------------
+
+  beta0j                             27.697      1.535     26.671     27.709     28.749     23.771     31.474 
+  beta1j                              0.634      0.423      0.357      0.646      0.922     -0.494      1.671 
+  Empower                            28.611      4.518     26.000     28.000     32.000     14.000     42.000 
+  Male.1                              0.484      0.500      0.000      0.000      1.000      0.000      1.000 
+  LMX                                 9.590      3.019      8.000      9.000     12.000      0.000     17.000 
+  Climate                            20.029      4.035     17.000     20.000     23.000     10.000     33.000 
+
+                                ------------------------------------------------------------------------------
+
+
+
+CORRELATIONS AMONG RESIDUALS:
+
+  No residual correlations.
+
+
+
+OUTCOME MODEL ESTIMATES:
+
+  Summaries based on 10000 iterations using 2 chains.
+  NOTE: Estimate column based on posterior median.
+
+
+Latent Variable:   beta0j     
+
+Grand Mean Centered: Climate LMX.mean[Team]
+
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+Variances:                      
+  Residual Var.                       1.058      0.557      0.243      2.372        ---        ---    193.838 
+
+Coefficients:                   
+  Intercept                          27.687      0.267     27.175     28.222  10745.948      0.000    376.587 
+  LMX.mean[Team]                     -0.166      0.299     -0.793      0.402      0.327      0.568    159.023 
+  Climate                             0.297      0.051      0.198      0.394     34.311      0.000    558.773 
+
+Standard Deviations:            
+  Residual SD                         1.029      0.267      0.493      1.540        ---        ---    159.110 
+
+Standardized Coefficients:      
+  LMX.mean[Team]                     -0.107      0.178     -0.439      0.255      0.329      0.566    148.513 
+  Climate                             0.746      0.104      0.529      0.934     50.654      0.000    231.776 
+
+Proportion Variance Explained   
+  by Coefficients                     0.588      0.145      0.313      0.873        ---        ---    165.751 
+  by Residual Variation               0.412      0.145      0.127      0.687        ---        ---    165.751 
+
+                                ------------------------------------------------------------------------------
+
+
+
+Latent Variable:   beta1j     
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+Variances:                      
+  Residual Var.                       0.188      0.076      0.073      0.368        ---        ---    408.240 
+
+Coefficients:                   
+  Intercept                           0.635      0.072      0.491      0.770     77.933      0.000    979.710 
+
+Standard Deviations:            
+  Residual SD                         0.433      0.086      0.270      0.606        ---        ---    366.471 
+
+Proportion Variance Explained   
+  by Coefficients                     0.000      0.000      0.000      0.000        ---        ---        nan 
+  by Residual Variation               1.000      0.000      1.000      1.000        ---        ---        nan 
+
+                                ------------------------------------------------------------------------------
+
+
+
+Outcome Variable:  Empower    
+
+Group Mean Centered: LMX
+
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+Variances:                      
+  Residual Var.                      12.297      0.813     10.856     14.025        ---        ---   1970.554 
+
+Coefficients:                   
+  beta0j                            @ 1.000        ---        ---        ---        ---        ---        --- 
+  Male.1                              1.878      0.296      1.304      2.458     40.204      0.000   1047.178 
+  LMX*beta1j                        @ 1.000        ---        ---        ---        ---        ---        --- 
+
+Standard Deviations:            
+  Residual SD                         3.507      0.115      3.295      3.745        ---        ---   1970.809 
+
+Standardized Coefficients:      
+  Male.1                              0.220      0.034      0.154      0.285     42.849      0.000   1031.727 
+  LMX*beta1j                          0.517      0.033      0.446      0.575    250.854      0.000    549.509 
+
+Proportion Variance Explained   
+  by Coefficients                     0.327      0.034      0.257      0.392        ---        ---    666.194 
+  by Residual Variation               0.673      0.034      0.608      0.743        ---        ---    666.194 
+
+                                ------------------------------------------------------------------------------
+
+
+
+Covariance Matrix: beta0j beta1j
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+Covariances:                    
+  Cov(beta0j,beta1j)                 -0.194      0.149     -0.500      0.095      1.745      0.187    277.827 
+
+Correlations:                   
+  Cor(beta0j,beta1j)                 -0.472      0.316     -0.942      0.233      2.022      0.155    121.932 
+
+                                ------------------------------------------------------------------------------
+
+
+
+
+PREDICTOR MODEL ESTIMATES:
+
+  Summaries based on 10000 iterations using 2 chains.
+  NOTE: Estimate column based on posterior median.
+
+
+
+Complete predictor: Male       
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+
+Grand Mean: Male.1                   -0.039      0.051     -0.136      0.061      0.580      0.447   4894.364 
+
+Level 1:                                                                                                      
+  Male.1 ~ LMX                        0.025      0.018     -0.011      0.060      1.851      0.174   3489.549 
+  Var(Male.1)                         1.000      0.000      1.000      1.000        ---        ---        nan 
+                                                                                                              
+                                ------------------------------------------------------------------------------
+
+
+
+Complete predictor: LMX        
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+
+Grand Mean                            9.583      0.146      9.296      9.872   4310.809      0.000    458.254 
+
+Level 1:                                                                                                      
+  Male.1                              0.198      0.147     -0.092      0.490      1.805      0.179   3893.597 
+  Residual Var.                       7.927      0.495      7.021      8.978        ---        ---   2040.459 
+
+Level 2:                                                                                                      
+  Climate                             0.020      0.038     -0.054      0.096      0.291      0.589    944.155 
+  Residual Var.                       1.040      0.344      0.500      1.847        ---        ---    250.095 
+                                                                                                              
+                                ------------------------------------------------------------------------------
+
+
+
+Complete predictor: Climate    
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+
+Grand Mean                           20.004      0.390     19.262     20.782   2634.341      0.000    439.092 
+
+Level 2:                                                                                                      
+  LMX                                 0.314      0.622     -0.826      1.637      0.295      0.587    825.567 
+  Residual Var.                      15.910      2.313     12.165     21.203        ---        ---   6886.535 
+                                                                                                              
+                                ------------------------------------------------------------------------------
+
+

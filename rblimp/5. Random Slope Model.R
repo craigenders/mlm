@@ -76,7 +76,7 @@ model3 <- rblimp(
 output(model3)
 
 # chi-bar significance test of random slope
-chibar_test(model = model3, DV = "Empower", IV = "LMX")
+chibar_test(model = model3, DV = 'Empower', IV = 'LMX')
 
 # random slope for sex
 model4 <- rblimp(
@@ -94,7 +94,7 @@ model4 <- rblimp(
 output(model4)
 
 # chi-bar significance test of random slope
-chibar_test(model = model4, DV = "Empower", IV = "Male.1")
+chibar_test(model = model4, DV = 'Empower', IV = 'Male')
 
 #------------------------------------------------------------------------------#
 # FINAL MODEL ----
@@ -143,3 +143,23 @@ names(model6)
 univariate_plot(vars = c('Empower[Team]','Empower$LMX[Team]','Empower.residual'), 
                 model = model6,
                 stats = T)
+
+#------------------------------------------------------------------------------#
+# LATENT VARIABLE SPECIFICATION (MLSEM) ----
+#------------------------------------------------------------------------------#
+
+model7 <- rblimp(
+  data = Employee,
+  nominal = 'Male',
+  clusterid = 'Team', 
+  latent = 'Team = beta0j beta1j',   
+  center = 'groupmean = LMX; grandmean = LMX.mean Climate;',  
+  model = '
+    beta0j ~ intercept LMX.mean Climate;
+    beta1j ~ intercept;
+    beta0j ~~ beta1j;    # correlate random intercepts and slopes
+    Empower ~ intercept@beta0j LMX@beta1j Male;',  
+  seed = 90291,
+  burn = 10000,
+  iter = 10000)
+output(model7)

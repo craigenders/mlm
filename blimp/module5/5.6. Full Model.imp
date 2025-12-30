@@ -1,9 +1,0 @@
-DATA: EmployeeSatisfaction.dat;
-VARIABLES: Employee Team Turnover Male Empower LMX JobSat Climate TeamPerf;
-NOMINAL: Male;    # invokes categorical variable model
-CLUSTERID: Team;    
-CENTER: groupmean = LMX Empower; grandmean = Male LMX.mean Empower.mean;  
-MODEL: JobSat ~ intercept LMX Empower Male LMX.mean Empower.mean | intercept Empower; 
-BURN: 10000;
-ITERATIONS: 30000;
-SEED: 90291;
