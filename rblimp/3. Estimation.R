@@ -101,7 +101,7 @@ bivariate_plot(PosAffect[Person] ~ SleepQual.mean[Person],
 #------------------------------------------------------------------------------#
 # HETEROGENEOUS VARIATION MODEL ----
 #------------------------------------------------------------------------------#
-set_blimp('/applications/blimp/blimp-nightly')
+
 # hev option gives cluster-specific level-1 variances
 model3 <- rblimp(
   data = PainDiary,
