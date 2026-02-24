@@ -7,6 +7,7 @@ groupmean = LMX;
 grandmean = Male LMX.mean Climate;
 MODEL: 
 Empower ~ intercept LMX Male LMX.mean Climate LMX*Climate LMX.mean*Climate | intercept LMX;
+SIMPLE: LMX | Climate; LMX.mean | Climate;
 SEED: 90291;
 BURN: 10000;
 ITERATIONS: 20000;

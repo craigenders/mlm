@@ -1,69 +1,64 @@
-# install.packages('remotes')
-# install.packages('ggplot2')
-# remotes::install_github('blimp-stats/rblimp')
+#------------------------------------------------------------------------------#
+# LOAD R PACKAGES ----
+#------------------------------------------------------------------------------#
 
 # load packages
-library(rblimp)
 library(ggplot2)
+library(rblimp)
 
-# load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/data/EmployeeSatisfactionData.RData", "rb")
-load(connect); close(connect)
+#------------------------------------------------------------------------------#
+# READ DATA ----
+#------------------------------------------------------------------------------#
 
-write.csv(Employee, file = '~/desktop/Employee.csv', row.names = F)
+# github url for raw data
+filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/Employee.csv'
 
-# load misc functions
-source("https://raw.githubusercontent.com/craigenders/mlm/main/mlm-functions.R")
+# create data frame from github data
+Employee <- read.csv(filepath, stringsAsFactors = T)
 
-# random slope model
+# plotting functions
+source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')
+
+#------------------------------------------------------------------------------#
+# RANDOM SLOPE MODEL ----
+#------------------------------------------------------------------------------#
+
+# random slope for lmx
 model1 <- rblimp(
   data = Employee,
   nominal = 'Male',
-  clusterid = 'Team',    
-  center = 'groupmean = LMX; grandmean = Male LMX.mean Climate',   
-  model = 'Empower ~ intercept LMX Male LMX.mean Climate | intercept LMX',  
+  clusterid = 'Team',
+  center = 'groupmean = LMX; grandmean = LMX.mean Climate',
+  model = 'Empower ~ intercept LMX Male LMX.mean Climate | intercept LMX;',
   seed = 90291,
   burn = 10000,
-  iter = 20000)
+  iter = 10000
+)
 
-# summarize results and plot parameter distributions
+# print output
 output(model1)
-posterior_plot(model1,'Empower')
 
-# plot ols lmx slopes
-slopes_by_cluster(data = Employee, y = 'Empower', x = 'LMX', lev2id = 'Team', numlines = 50)
+#------------------------------------------------------------------------------#
+# MODERATED MODEL WITH CROSS-LEVEL AND BETWEEN-LEVEL INTERACTIONS ----
+#------------------------------------------------------------------------------#
 
-# disaggregated interaction effects
+# interactive model
 model2 <- rblimp(
   data = Employee,
   nominal = 'Male',
   clusterid = 'Team',    
   center = 'groupmean = LMX; grandmean = Male LMX.mean Climate',   
   model = 'Empower ~ LMX Male LMX.mean Climate LMX*Climate LMX.mean*Climate | LMX', 
+  simple = 'LMX | Climate; LMX.mean | Climate;',
   seed = 90291,
   burn = 10000,
   iter = 20000)
 
-# summarize results and plot parameter distributions
+# print output
 output(model2)
-posterior_plot(model2,'Empower')
 
-# disaggregated interaction effects with simple intercepts and slopes
-model3 <- rblimp(
-  data = Employee,
-  nominal = 'Male',
-  clusterid = 'Team',    
-  center = 'groupmean = LMX; grandmean = Male LMX.mean Climate',   
-  model = 'Empower ~ LMX Male LMX.mean Climate LMX*Climate LMX.mean*Climate | LMX', 
-  simple = 'LMX | Climate',
-  seed = 90291,
-  burn = 10000,
-  iter = 20000)
-
-# summarize results and plot parameter distributions
-output(model3)
-posterior_plot(model3,'Empower')
-simple_plot(Empower ~ LMX | Climate, model3)
+# plot simple slopes
+simple_plot(Empower ~ LMX | Climate, model = model2)
 
 
 
