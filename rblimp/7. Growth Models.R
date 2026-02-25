@@ -1,73 +1,108 @@
-# install.packages('remotes')
-# install.packages('ggplot2')
-# remotes::install_github('blimp-stats/rblimp')
+#------------------------------------------------------------------------------#
+# LOAD R PACKAGES ----
+#------------------------------------------------------------------------------#
 
 # load packages
-library(rblimp)
 library(ggplot2)
+library(rblimp)
 
-# load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/ClinicalTrial.RData", "rb")
-load(connect); close(connect)
+#------------------------------------------------------------------------------#
+# READ DATA ----
+#------------------------------------------------------------------------------#
 
-################################################################
-# combined-model specification
-################################################################
+# github url for raw data
+filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/TrialData.csv'
 
-# repeated measures anova
+# create data frame from github data
+Trial <- read.csv(filepath, stringsAsFactors = T)
+
+# plotting functions
+source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')
+
+#------------------------------------------------------------------------------#
+# REPEATED MEASURES ANALYSIS ----
+#------------------------------------------------------------------------------#
+
+# repeated measures model
 model1 <- rblimp(
-  data = ClinicalTrial,
+  data = Trial,
+  nominal = 'Week',
   clusterid = 'Person',    
-  model = 'Severity ~ intercept@0 (Week==1) (Week==2) (Week==4) (Week==7) | intercept',  
+  model = 'Severity ~ intercept Week | intercept',  
   seed = 90291,
   burn = 10000,
-  iter = 20000)
+  iter = 10000,
+  nimps = 20)
 
-# summarize results
+# print output
 output(model1)
-posterior_plot(model1,'Severity')
 
-# extract means from estimates object (always starting in 3rd row and first column)
-means <- model1@estimates[3:6,1] # extract means
-waves <- c(1,2,4,7) # specify values of the measurement occasions
-means <- as.data.frame(cbind(waves,means))
+# plot means by time
+bivariate_plot(Severity.predicted ~ Week, 
+               model = model1, 
+               discrete_x = 'Week',
+               points = F)
 
-# plot means
-ggplot(means, aes(x = waves, y = means)) +
-  geom_line() +     
-  geom_point() +
-  labs(x = "Week",y = "Severity",title = "Line Plot of Means")
+#------------------------------------------------------------------------------#
+# LINEAR GROWTH MODEL ----
+#------------------------------------------------------------------------------#
 
 # linear growth model
 model2 <- rblimp(
-  data = ClinicalTrial,
+  data = Trial,
   clusterid = 'Person',  
   transform = 'Time = Week - 2',
   model = 'Severity ~ intercept Time | intercept Time',  
   seed = 90291,
   burn = 10000,
-  iter = 20000)
+  iter = 10000,
+  nimps = 20)
 
-# summarize results
+# print output
 output(model2)
-posterior_plot(model2,'Severity')
 
-# quadratic growth model
+# plot growth curve and individual trajectories
+bivariate_plot(Severity.predicted ~ Week, 
+               model = model2, 
+               lines = T, 
+               points = F)
+
+# plot standardized residuals by time
+bivariate_plot(Severity.residual ~ Week, 
+               model = model2, 
+               discrete_x = 'Week')
+
+#------------------------------------------------------------------------------#
+# REPEATED MEASURES ANALYSIS WITH PREDICTOR ----
+#------------------------------------------------------------------------------#
+
+# repeated measures model
 model3 <- rblimp(
-  data = ClinicalTrial,
-  clusterid = 'Person',  
-  transform = 'Time = Week - 2',
-  model = 'Severity ~ intercept Time Time^2 | intercept Time',  
+  data = Trial,
+  nominal = 'Week Drug',
+  clusterid = 'Person',    
+  model = 'Severity ~ intercept Week Drug Week*Drug | intercept',  
   seed = 90291,
   burn = 10000,
-  iter = 20000)
+  iter = 10000,
+  nimps = 20)
 
-# summarize results
+# print output
 output(model3)
-posterior_plot(model2,'Severity')
 
+# plot means by time
+bivariate_plot(Severity.predicted ~ Week | Drug, 
+               model = model3, 
+               discrete_x = 'Week', 
+               points = F)
+
+#------------------------------------------------------------------------------#
+# LINEAR GROWTH MODEL WITH PREDICTOR ----
+#------------------------------------------------------------------------------#
+
+# linear model w predictor
 model4 <- rblimp(
-  data = ClinicalTrial,
+  data = Trial,
   clusterid = 'Person', 
   ordinal = 'Drug',
   transform = 'Time = Week - 2',  
@@ -75,7 +110,15 @@ model4 <- rblimp(
   simple = 'Time | Drug',
   seed = 90291,
   burn = 10000,
-  iter = 20000)
+  iter = 10000,
+  nimps = 20)
+
+# print output
 output(model4)
-posterior_plot(model4, 'Severity')
+
+# plot simple slopes
 simple_plot(Severity ~ Time | Drug, model4)
+
+# plot standardized residuals by time
+bivariate_plot(Severity.residual ~ Week, model = model4, discrete_x = 'Week')
+
