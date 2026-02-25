@@ -11,10 +11,10 @@ library(rblimp)
 #------------------------------------------------------------------------------#
 
 # github url for raw data
-filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/ClinicalTrialData.csv'
+filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/TrialData.csv'
 
 # create data frame from github data
-ClinicalTrial <- read.csv(filepath, stringsAsFactors = T)
+Trial <- read.csv(filepath, stringsAsFactors = T)
 
 # plotting functions
 source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')
@@ -25,7 +25,7 @@ source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/funct
 
 # repeated measures model
 model1 <- rblimp(
-  data = ClinicalTrial,
+  data = Trial,
   nominal = 'Week',
   clusterid = 'Person',    
   model = 'Severity ~ intercept Week | intercept',  
@@ -49,7 +49,7 @@ bivariate_plot(Severity.predicted ~ Week,
 
 # linear growth model
 model2 <- rblimp(
-  data = ClinicalTrial,
+  data = Trial,
   clusterid = 'Person',  
   transform = 'Time = Week - 2',
   model = 'Severity ~ intercept Time | intercept Time',  
@@ -78,7 +78,7 @@ bivariate_plot(Severity.residual ~ Week,
 
 # repeated measures model
 model3 <- rblimp(
-  data = ClinicalTrial,
+  data = Trial,
   nominal = 'Week Drug',
   clusterid = 'Person',    
   model = 'Severity ~ intercept Week Drug Week*Drug | intercept',  
@@ -102,7 +102,7 @@ bivariate_plot(Severity.predicted ~ Week | Drug,
 
 # linear model w predictor
 model4 <- rblimp(
-  data = ClinicalTrial,
+  data = Trial,
   clusterid = 'Person', 
   ordinal = 'Drug',
   transform = 'Time = Week - 2',  
