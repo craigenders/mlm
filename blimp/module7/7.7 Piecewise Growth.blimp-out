@@ -1,0 +1,175 @@
+
+---------------------------------------------------------------------------
+
+                                   Blimp
+                                   4.0.2
+
+             Blimp was developed with funding from Institute of
+           Education Sciences awards R305D150056 and R305D190002.
+
+            Craig K. Enders, P.I. Email: cenders@psych.ucla.edu
+           Brian T. Keller, Co-P.I. Email: btkeller@missouri.edu
+                 Han Du, Co-P.I. Email: hdu@psych.ucla.edu
+                 Roy Levy, Co-P.I. Email: roy.levy@asu.edu
+
+              Programming and Blimp Studio by Brian T. Keller
+
+                   There is no expressed license given.
+
+---------------------------------------------------------------------------
+
+
+ALGORITHMIC OPTIONS SPECIFIED:
+
+  Imputation method:                 Fully Bayesian model-based
+  MCMC algorithm:                    Full conditional Metropolis sampler with
+                                       Auto-Derived Conditional Distributions
+  Default Priors:
+    Multilevel covariance matrices:  Zero matrix, df = -(p + 1) (PRIOR2)
+    Outcome covariance matrices:     Zero matrix, df = -(p + 1) (PRIOR2)
+    Predictor model variances:       Unit sum of squares, df = 2 (XPRIOR1)
+  Chain Starting Values:             Random starting values
+
+
+  NOTE: For complete list of priors include 'pinfo' in the options.
+
+
+BURN-IN POTENTIAL SCALE REDUCTION (PSR) OUTPUT:
+
+  NOTE: Split chain PSR is being used. This splits each chain's
+        iterations to create twice as many chains.
+
+  Comparing iterations across 2 chains     Highest PSR   Parameter #  
+                          251 to 500             1.110            16  
+                          501 to 1000            1.031             9  
+                          751 to 1500            1.028             9  
+                         1001 to 2000            1.016            10  
+                         1251 to 2500            1.007             8  
+                         1501 to 3000            1.010             2  
+                         1751 to 3500            1.022             9  
+                         2001 to 4000            1.009             9  
+                         2251 to 4500            1.011             9  
+                         2501 to 5000            1.021             9  
+                         2751 to 5500            1.014             9  
+                         3001 to 6000            1.003             9  
+                         3251 to 6500            1.011             9  
+                         3501 to 7000            1.008             9  
+                         3751 to 7500            1.011             9  
+                         4001 to 8000            1.007             9  
+                         4251 to 8500            1.004             3  
+                         4501 to 9000            1.002            10  
+                         4751 to 9500            1.002             7  
+                         5001 to 10000           1.004             9  
+
+
+DATA INFORMATION:
+
+  Level-2 identifier:       person
+  Sample Size:              1748
+  Level-2 Clusters:         437
+  Missing Data Info:
+
+                      Pattern #:       1     2
+                          miss % --------------
+                 severity = 10.2       -     M  
+                   phase1 =  0.0       -     -  
+                   phase2 =  0.0       -     -  
+                                 --------------
+                                 %  89.8  10.2
+
+
+MODEL INFORMATION:
+
+  NUMBER OF PARAMETERS
+    Outcome Models:         7
+    Predictor Models:       0
+
+  PREDICTORS
+    Fixed variables:        phase1 phase2
+
+  MODELS
+    [1]  severity ~ Intercept phase1 phase2 | Intercept phase2
+
+
+WARNING MESSAGES:
+
+  No warning messages.
+
+
+MODEL FIT:
+
+
+  INFORMATION CRITERIA
+
+    Marginal Likelihood
+      DIC2                  5362.241
+      WAIC                  5431.815
+
+    Conditional Likelihood
+      DIC2                  4584.764
+      WAIC                  4859.291
+
+
+IMPUTED DATA SUMMARIES:
+
+  NOTE: Imputed data summaries are averaged across 10000 data sets.
+
+
+Variables                              Mean     StdDev        25%        50%        75%        Min        Max 
+                                ------------------------------------------------------------------------------
+
+  severity                            4.309      1.501      3.468      4.500      5.500     -1.198      7.717 
+  phase1                             -0.250      0.433     -0.500      0.000      0.000     -1.000      0.000 
+  phase2                              1.750      2.047      0.000      1.000      3.500      0.000      5.000 
+
+                                ------------------------------------------------------------------------------
+
+
+
+CORRELATIONS AMONG RESIDUALS:
+
+  No residual correlations.
+
+
+
+OUTCOME MODEL ESTIMATES:
+
+  Summaries based on 10000 iterations using 2 chains.
+  NOTE: Estimate column based on posterior median.
+
+
+Outcome Variable:  severity   
+
+Parameters                         Estimate     StdDev       2.5%      97.5%      ChiSq     PValue      N_Eff 
+                                ------------------------------------------------------------------------------
+Variances:                      
+  L2 : Var(Intercept)                 0.538      0.059      0.430      0.663        ---        ---   1178.384 
+  L2 : Cov(phase2,Intercept)          0.043      0.015      0.011      0.071        ---        ---    615.936 
+  L2 : Var(phase2)                    0.043      0.007      0.030      0.058        ---        ---    526.130 
+  Residual Var.                       0.690      0.036      0.624      0.764        ---        ---   1166.844 
+
+Coefficients:                   
+  Intercept                           4.554      0.050      4.457      4.651   8430.870      0.000   1648.789 
+  phase1                             -0.812      0.054     -0.919     -0.708    229.044      0.000   9024.547 
+  phase2                             -0.257      0.016     -0.288     -0.225    250.850      0.000   2017.924 
+
+Standard Deviations:            
+  L2 : SD(Intercept)                  0.733      0.040      0.655      0.814        ---        ---   1164.878 
+  L2 : Cor(phase2,Intercept)          0.283      0.111      0.067      0.506        ---        ---    456.197 
+  L2 : SD(phase2)                     0.208      0.017      0.174      0.241        ---        ---    515.875 
+  Residual SD                         0.830      0.021      0.790      0.874        ---        ---   1174.589 
+
+Standardized Coefficients:      
+  phase1                             -0.233      0.016     -0.264     -0.203    221.849      0.000   7467.127 
+  phase2                             -0.348      0.020     -0.387     -0.308    296.108      0.000   2336.831 
+
+Proportion Variance Explained   
+  by Coefficients                     0.256      0.017      0.222      0.290        ---        ---   2457.964 
+  by Level-2 Random Intercepts        0.360      0.022      0.317      0.404        ---        ---   2911.028 
+  by Level-2 Random Slopes            0.080      0.012      0.057      0.105        ---        ---    514.071 
+  by Level-1 Residual Variation       0.303      0.019      0.269      0.342        ---        ---   1007.124 
+
+                                ------------------------------------------------------------------------------
+
+
+

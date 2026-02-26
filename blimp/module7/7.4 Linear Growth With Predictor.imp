@@ -7,5 +7,5 @@ TRANSFORM: time = week – 2;   # compute temporal predictor
 MODEL: severity ~ intercept time drug time*drug | intercept time; 
 SIMPLE: time | drug;
 BURN: 10000;
-ITERATIONS: 20000;
+ITERATIONS: 10000;
 SEED: 90291;

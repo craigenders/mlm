@@ -1,10 +1,10 @@
 DATA: SchizophreniaTrial.dat;
 VARIABLES: person week drug male severity;
 CLUSTERID: person;
+ORDINAL: drug;
 MISSING: 999; 
 TRANSFORM: time = week – 2;   # compute temporal predictor
-MODEL: 
-severity ~ intercept time time^2 | intercept time;  # average trajectory with curvature
+MODEL: severity ~ intercept time time^2 drug drug*time drug*time^2 | intercept time; 
 BURN: 10000;
-ITERATIONS: 20000;
+ITERATIONS: 10000;
 SEED: 90291;

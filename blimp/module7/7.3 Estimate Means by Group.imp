@@ -2,9 +2,10 @@ DATA: SchizophreniaTrial.dat;
 VARIABLES: person week drug male severity;
 CLUSTERID: person;
 NOMINAL: week; # time is converted to dummy codes (allows means to freely vary without trend)
+ORDINAL: drug;
 MISSING: 999; 
 MODEL: 
-severity ~ intercept week | intercept;  # time-varying means
+severity ~ intercept week drug drug*week | intercept;  # time-varying means within group
 BURN: 10000;
 ITERATIONS: 10000;
 SEED: 90291;

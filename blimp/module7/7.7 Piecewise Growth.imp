@@ -1,0 +1,12 @@
+DATA: SchizophreniaTrial.dat;
+VARIABLES: person week drug male severity;
+CLUSTERID: person;
+MISSING: 999; 
+TRANSFORM:
+time = Week - 2;
+phase1 = ifelse(time < 0, time, 0); # temporal predictors
+phase2 = ifelse(time < 0, 0, time);
+MODEL: severity ~ intercept phase1 phase2 | intercept phase2; # two-phase linear growth
+BURN: 10000;
+ITERATIONS: 10000;
+SEED: 90291;

@@ -3,8 +3,7 @@ VARIABLES: person week drug male severity;
 CLUSTERID: person;
 MISSING: 999; 
 TRANSFORM: time = week – 2;   # compute temporal predictor
-MODEL: 
-severity ~ intercept time | intercept time; 
+MODEL: severity ~ intercept time time^2 | intercept time; # quadratic time effect
 BURN: 10000;
 ITERATIONS: 10000;
 SEED: 90291;
