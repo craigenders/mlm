@@ -1,121 +1,79 @@
-# install.packages('remotes')
-# install.packages('ggplot2')
-# remotes::install_github('blimp-stats/rblimp')
+#------------------------------------------------------------------------------#
+# LOAD R PACKAGES ----
+#------------------------------------------------------------------------------#
 
 # load packages
-library(rblimp)
 library(ggplot2)
+library(rblimp)
 
-# load data
-connect <- url("https://raw.githubusercontent.com/craigenders/mlm/main/EmployeeSatisfactionData.RData", "rb")
-load(connect); close(connect)
+#------------------------------------------------------------------------------#
+# READ DATA ----
+#------------------------------------------------------------------------------#
 
-# load misc functions
-source("https://raw.githubusercontent.com/craigenders/mlm/main/mlm-functions.R")
+# github url for raw data
+filepath <- 'https://raw.githubusercontent.com/craigenders/mlm/main/data/Employee.csv'
 
-# random intercept model with mediation at both levels
+# create data frame from github data
+Employee <- read.csv(filepath, stringsAsFactors = T)
+
+# plotting functions
+source('https://raw.githubusercontent.com/blimp-stats/blimp-book/main/misc/functions.R')
+
+#------------------------------------------------------------------------------#
+# 1-1-1 MODEL: WITHIN-CLUSTER MEDIATION ----
+#------------------------------------------------------------------------------#
+
+# random slope model with mediation at level-1
 model1 <- rblimp(
   data = Employee,
   clusterid = 'Team', 
-  latent = 'Team = LMX_b Empower_b JobSat_b',  
+  latent = 'Team = a0j a1j b0j b1j b2j',
+  center = 'groupmean = LMX',
   model = '
-    LMX_w = LMX – LMX_b;   # text substitution alias to simplify the equations
-    Empower_w = Empower – Empower_b; 
-    level2:   # label that groups summary tables for a set of models
-    LMX_b ~ intercept; 
-    Empower_b ~ intercept LMX_b@apath_b;   # @ labels the between-cluster slopes
-    JobSat_b ~ intercept LMX_b@tpath_b Empower_b@bpath_b; 
-    level1:   # label that groups summary tables for a set of models
-    LMX ~ intercept@LMX_b; 
-    Empower ~ intercept@Empower_b LMX_w@apath_w;   # @ labels the within-cluster slopes
-    JobSat ~ intercept@JobSat_b LMX_w@tpath_w Empower_w@bpath_w;',  
-  parameters =  '
-    ab_w = apath_w * bpath_w;  
-    ab_b = apath_b * bpath_b;',
+    level2:   # arbitrary label that groups models together on the output
+    intercept –> a0j a1j@a1mean b0j b1j@b1mean b2j;  # add intercept into multiple equations with –>
+    a0j ~~ b0j;   
+    a1j ~~ b1j@a1b1corr;    
+    level1:   # arbitrary label that groups models together on the output
+    Empower ~ intercept@a0j LMX@a1j;  
+    JobSat ~ intercept@b0j (Empower – a0j)@b1j LMX@b2j;', 
+  parameters = '
+    a1b1cov = a1b1corr * sqrt(a1j.totalvar * b1j.totalvar); # covariance between A and B random slopes
+    indirect_w = a1mean * b1mean + a1b1cov; # within-cluster indirect effect',
   seed = 90291,
-  burn = 10000,
+  burn = 20000,
   iter = 20000)
 
 output(model1)
-posterior_plot(model1, 'ab_w')
-posterior_plot(model1, 'ab_b')
+posterior_plot(model1,'indirect_w')
+
+#------------------------------------------------------------------------------#
+# 1-1-1 MODEL: WITHIN- AND BETWEEN-CLUSTER MEDIATION ----
+#------------------------------------------------------------------------------#
 
 # random slope model with mediation at both levels
 model2 <- rblimp(
   data = Employee,
   clusterid = 'Team', 
-  latent = 'team = LMX_b Empower_b JobSat_b apath_w bpath_w tpath_w',
+  latent = 'Team = a0j a1j b0j b1j b2j',
+  center = 'groupmean = LMX',
   model = '
-    LMX_w = LMX – LMX_b;   # text substitution alias to simplify the equations
-    Empower_w = Empower – Empower_b; 
-    level2:   # label that groups summary tables for a set of models
-    LMX_b ~ intercept; 
-    Empower_b ~ intercept LMX_b@apath_b;   # @ labels the between-cluster slopes
-    JobSat_b ~ intercept LMX_b@tpath_b Empower_b@bpath_b;
-    apath_w ~ intercept@apathw_mean; # random slope latent variable with its mean labeled
-    bpath_w ~ intercept@bpathw_mean; # random slope latent variable with its mean labeled
-    tpath_w ~ intercept; # random slope latent variable
-    apath_w ~~ bpath_w@ab_corr; # correlate random slopes and attach a label;
-    apath_w bpath_w ~~ tpath_w;
-    level1:   # label that groups summary tables for a set of models
-    LMX ~ intercept@LMX_b; 
-    Empower ~ intercept@Empower_b LMX_w@apath_w;   # @ fixes coefficients to their random slopes
-    JobSat ~ intercept@JobSat_b LMX_w@tpath_w Empower_w@bpath_w;', 
+    level2:   # arbitrary label that groups models together on the output
+    intercept –> a0j a1j@a1mean b0j b1j@b1mean b2j;  # add intercept into multiple equations with –>
+    a0j ~ LMX.mean@l2apath;
+    b0j ~ a0j@l2bpath LMX.mean;
+    a1j ~~ b1j@a1b1corr;    
+    level1:   # arbitrary label that groups models together on the output
+    Empower ~ intercept@a0j LMX@a1j;  
+    JobSat ~ intercept@b0j (Empower – a0j)@b1j LMX@b2j;', 
   parameters = '
-    ab_cov = ab_corr * sqrt(apath_w.totalvar * bpath_w.totalvar); # covariance between random slopes uses .totalvar to get the variance
-    ab_w = apathw_mean * bpathw_mean + ab_cov;
-    ab_b = apath_b * bpath_b',
+    a1b1_cov = a1b1corr * sqrt(a1j.totalvar * b1j.totalvar); # covariance between A and B random slopes
+    indirect_w = a1mean * b1mean + a1b1_cov; # within-cluster indirect effect
+    indirect_b = l2apath * l2bpath;',
   seed = 90291,
-  burn = 10000,
-  iter = 20000)
+  burn = 25000,
+  iter = 25000)
 
-output(model2)
-posterior_plot(model2,'ab_w')
-posterior_plot(model2, 'ab_b')
-
-# random slope model with a level-2 moderating the within-cluster a and p paths
-model3 <- rblimp(
-  data = Employee,
-  clusterid = 'Team', 
-  latent = 'team = LMX_b Empower_b JobSat_b apath_w bpath_w tpath_w',
-  center = 'grandmean = Climate',
-  model = '
-    LMX_w = LMX – LMX_b;   # text substitution alias to simplify the equations
-    Empower_w = Empower – Empower_b; 
-    level2:   # label that groups summary tables for a set of models
-    Climate ~ intercept; 
-    LMX_b ~ intercept; 
-    Empower_b ~ intercept LMX_b@apath_b;   # @ labels the between-cluster slopes
-    JobSat_b ~ intercept LMX_b@tpath_b Empower_b@bpath_b;
-    apath_w ~ intercept@apathw_mean climate@apathw_mod; # random slope predicted by level-2 moderator
-    bpath_w ~ intercept@bpathw_mean climate@bpathw_mod;# random slope predicted by level-2 moderator
-    tpath_w ~ intercept; # random slope latent variable
-    apath_w ~~ bpath_w@ab_corr; # correlate random slopes and attach a label;
-    apath_w bpath_w ~~ tpath_w;
-    level1:   # label that groups summary tables for a set of models
-    LMX ~ intercept@LMX_b; 
-    Empower ~ intercept@Empower_b LMX_w@apath_w;   # @ fixes coefficients to their random slopes
-    JobSat ~ intercept@JobSat_b LMX_w@tpath_w Empower_w@bpath_w;', 
-  parameters = '
-    ab_cov = ab_corr * sqrt(apath_w.totalvar * bpath_w.totalvar); # covariance between random slopes uses .totalvar to get the variance
-    a_hi = apathw_mean + apathw_mod*sqrt(climate.totalvar); # a path at different values of the moderator
-    a_mean = apathw_mean;
-    a_lo = apathw_mean - apathw_mod*sqrt(climate.totalvar);
-    b_hi = bpathw_mean + bpathw_mod*sqrt(climate.totalvar); # b path at different values of the moderator
-    b_mean = bpathw_mean;
-    b_lo = bpathw_mean - bpathw_mod*sqrt(climate.totalvar);
-    ab_w_hi = a_hi*b_hi + ab_cov;   # within-cluster mediated effect at different values of the moderator
-    ab_w_mean = a_mean*b_mean + ab_cov;
-    ab_w_lo = a_lo*b_lo + ab_cov;
-    ab_b = apath_b*bpath_b',
-  seed = 90291,
-  burn = 10000,
-  iter = 20000)
-
-output(model3)
-posterior_plot(model3,'ab_w_hi')
-posterior_plot(model3,'ab_w_mean')
-posterior_plot(model3,'ab_w_lo')
-posterior_plot(model3, 'ab_b')
-
-
+output(model2) 
+posterior_plot(model2,'indirect_w')
+posterior_plot(model2,'indirect_b')

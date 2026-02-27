@@ -1,0 +1,19 @@
+DATA: EmployeeSatisfaction.dat;
+VARIABLES: Employee Team Turnover Male Empower LMX JobSat Climate TeamPerf;
+CLUSTERID: Team;   
+LATENT: Team = a0j a1j b0j b1j b2j;  
+CENTER: groupmean = LMX; 
+MODEL: 
+level2:   
+intercept –> a0j a1j@a1mean b0j b1j@b1mean b2j; 
+a0j ~~ b0j;   
+a1j ~~ b1j@a1b1corr;    
+level1:  
+Empower ~ intercept@a0j LMX@a1j;  
+JobSat ~ intercept@b0j (Empower – a0j)@b1j LMX@b2j; 
+PARAMETERS: 
+a1b1cov = a1b1corr * sqrt(a1j.totalvar * b1j.totalvar);   
+indirect_w = a1mean * b1mean + a1b1cov; 
+BURN: 20000;
+ITERATIONS: 20000;
+SEED: 90291;
