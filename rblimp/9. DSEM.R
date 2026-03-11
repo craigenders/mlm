@@ -51,14 +51,14 @@ model2 <- rblimp(
   data = PainDiary,
   clusterid = 'Person', 
   timeid = 'Day',   
-  latent = 'Person = Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAffect_CL',  
+  latent = 'Person = Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL',  
   model = '
-    intercept -> Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAffect_CL;  # empty model for random intercepts and slopes
-    Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAffect_CL ~~    
-       Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAffect_CL;   # correlations
+    intercept -> Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL;  # empty model for random intercepts and slopes
+    Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL ~~    
+       Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL;   # correlations
     Pain_lag = Pain.lag - Pain_PM;               # definition variable that centers lagged predictor
     PosAff_lag = PosAffect.lag - PosAff_PM;      # definition variable that centers lagged predictor
-    Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAffect_CL;      # set level-1 coefficients equal to random intercepts and slopes
+    Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAff_CL;      # set level-1 coefficients equal to random intercepts and slopes
     PosAffect ~ intercept@PosAff_PM PosAff_lag@PosAff_AR Pain_lag@Pain_CL;  # set level-1 coefficients equal to random intercepts and slopes
     Pain ~~ PosAffect;   # level-1 residual correlation',  
   seed = 90291,
@@ -77,21 +77,85 @@ model3 <- rblimp(
   data = PainDiary,
   clusterid = 'Person', 
   timeid = 'Day',   
-  latent = 'Person = Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAffect_CL PosAff_LV',  
+  latent = 'Person = Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV',  
   model = '
-    intercept -> Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAffect_CL PosAff_LV;  # empty model for random intercepts and slopes
-    Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAffect_CL PosAff_LV ~~    
-       Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAffect_CL PosAff_LV;   # correlations
+    intercept -> Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;  # empty model for random intercepts and slopes
+    Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV ~~    
+       Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;   # correlations
     Pain_lag = Pain.lag - Pain_PM;               # definition variable that centers lagged predictor
     PosAff_lag = PosAffect.lag - PosAff_PM;      # definition variable that centers lagged predictor
-    Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAffect_CL;      # set level-1 coefficients equal to random intercepts and slopes
-    var(Pain) ~ intercept@Pain_LV;           # heterogeneous within-person variance
+    Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAff_CL;      # set level-1 coefficients equal to random intercepts and slopes
+    var(Pain) ~ intercept@Pain_LV ;           # heterogeneous within-person variance
     PosAffect ~ intercept@PosAff_PM PosAff_lag@PosAff_AR Pain_lag@Pain_CL;  # set level-1 coefficients equal to random intercepts and slopes
     var(PosAffect) ~ intercept@PosAff_LV;    # heterogeneous within-person variance 
     Pain ~~ PosAffect;   # level-1 residual correlation',  
   seed = 90291,
-  burn = 10000,
-  iter = 10000)
+  burn = 20000,
+  iter = 20000)
 
 # print output
 output(model3)
+
+#------------------------------------------------------------------------------#
+# MODERATED VAR(1) MODEL WITH HETEROGENEOUS WITHIN-PERSON VARIATION ----
+#------------------------------------------------------------------------------#
+
+# VAR(1) with person-specific intraindividual variation
+model4 <- rblimp(
+  data = PainDiary,
+  clusterid = 'Person', 
+  timeid = 'Day',   
+  latent = 'Person = Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV', 
+  center = 'grandmean = stress',
+  model = '
+    intercept -> Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;  # empty model for random intercepts and slopes
+    Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV ~~    
+       Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;   # correlations
+    Pain_AR ~ stress;     # autoregressive effect moderated by stress
+    PosAff_AR ~ stress;   # autoregressive effect moderated by stress
+    Pain_lag = Pain.lag - Pain_PM;               # definition variable that centers lagged predictor
+    PosAff_lag = PosAffect.lag - PosAff_PM;      # definition variable that centers lagged predictor
+    Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAff_CL;      # set level-1 coefficients equal to random intercepts and slopes
+    var(Pain) ~ intercept@Pain_LV ;           # heterogeneous within-person variance
+    PosAffect ~ intercept@PosAff_PM PosAff_lag@PosAff_AR Pain_lag@Pain_CL;  # set level-1 coefficients equal to random intercepts and slopes
+    var(PosAffect) ~ intercept@PosAff_LV;    # heterogeneous within-person variance 
+    Pain ~~ PosAffect;   # level-1 residual correlation',  
+  seed = 90291,
+  burn = 20000,
+  iter = 20000)
+
+# print output
+output(model4)
+
+#------------------------------------------------------------------------------#
+# VAR(1) MODEL WITH PREDICTOR OF HETEROGENEOUS WITHIN-PERSON VARIATION ----
+#------------------------------------------------------------------------------#
+
+# VAR(1) with predictor of person-specific intraindividual variation
+model5 <- rblimp(
+  data = PainDiary,
+  clusterid = 'Person', 
+  timeid = 'Day',   
+  latent = 'Person = Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV', 
+  center = 'grandmean = stress',
+  model = '
+    intercept -> Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;  # empty model for random intercepts and slopes
+    Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV ~~    
+       Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;   # correlations
+    Pain_LV ~ stress;     # heterogeneous within-person variance w predictor
+    PosAff_LV ~ stress;   # heterogeneous within-person variance w predictor
+    Pain_lag = Pain.lag - Pain_PM;               # definition variable that centers lagged predictor
+    PosAff_lag = PosAffect.lag - PosAff_PM;      # definition variable that centers lagged predictor
+    Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAff_CL;      # set level-1 coefficients equal to random intercepts and slopes
+    var(Pain) ~ intercept@Pain_LV;           # heterogeneous within-person variance
+    PosAffect ~ intercept@PosAff_PM PosAff_lag@PosAff_AR Pain_lag@Pain_CL;  # set level-1 coefficients equal to random intercepts and slopes
+    var(PosAffect) ~ intercept@PosAff_LV;    # heterogeneous within-person variance
+    Pain ~~ PosAffect;   # level-1 residual correlation',  
+  seed = 90291,
+  burn = 20000,
+  iter = 20000)
+
+# print output
+output(model5)
+
+

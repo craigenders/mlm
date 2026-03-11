@@ -1,0 +1,23 @@
+DATA: PainDiary.dat;
+VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual Female Education 
+   Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
+CLUSTERID: Person;  
+TIMEID: Day; 
+LATENT: Person = Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;
+CENTER: grandmean = stress;
+MODEL: 
+intercept -> Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;  # empty model for random intercepts and slopes
+Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV ~~    
+   Pain_PM Pain_AR Pain_CL Pain_LV PosAff_PM PosAff_AR PosAff_CL PosAff_LV;   # correlations
+Pain_LV ~ stress;     # heterogeneous within-person variance w predictor
+PosAff_LV ~ stress;   # heterogeneous within-person variance w predictor
+Pain_lag = Pain.lag - Pain_PM;                     # definition variable that centers lagged predictor
+PosAff_lag = PosAffect.lag - PosAff_PM;      # definition variable that centers lagged predictor
+Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAff_CL;      # set level-1 coefficients equal to random intercepts and slopes
+var(Pain) ~ intercept@Pain_LV;   # heterogeneous intraindividual variation 
+PosAffect ~ intercept@PosAff_PM PosAff_lag@PosAff_AR Pain_lag@Pain_CL;  # set level-1 coefficients equal to random intercepts and slopes
+var(PosAffect) ~ intercept@PosAff_LV;   # heterogeneous intraindividual variation  
+Pain ~~ PosAffect;   # level-1 residual correlation
+BURN: 20000;
+ITERATIONS: 20000;
+SEED: 90291;

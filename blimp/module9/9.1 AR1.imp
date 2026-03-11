@@ -1,0 +1,14 @@
+DATA: PainDiary.dat;
+VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual Female Education 
+   Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
+CLUSTERID: Person;  
+TIMEID: Day; 
+LATENT: Person = PosAff_PM PosAff_AR;   
+MODEL: 
+intercept –> PosAff_PM PosAff_AR;                # empty model for random intercepts and ar1 slopes
+PosAff_PM ~~ PosAff_AR;                                # correlate intercepts and slopes
+PosAffLag = PosAffect.lag – PosAff_PM;        # definition variable that centers lagged predictor
+PosAffect ~ intercept@PosAff_PM PosAffLag@PosAff_AR;       # set level-1 coefficients equal to random intercepts and slopes
+BURN: 10000;
+ITERATIONS: 10000;
+SEED: 90291;

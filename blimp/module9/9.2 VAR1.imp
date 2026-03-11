@@ -1,0 +1,17 @@
+DATA: PainDiary.dat;
+VARIABLES: Person Day PosAffect NegAffect Pain WorkGoal LifeGoal SleepQual Female Education 
+   Employment MarStatus NumDiagnose ActivityLevel PainAccept Catastrophize Stress Anxiety;
+CLUSTERID: Person;  
+TIMEID: Day; 
+LATENT: Person = Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL;
+MODEL: 
+intercept –> Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL;      # empty model for random intercepts and slopes
+Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL ~~ Pain_PM Pain_AR Pain_CL PosAff_PM PosAff_AR PosAff_CL;     # correlations
+Pain_lag = Pain.lag - Pain_PM;                        # definition variable that centers lagged predictor                          
+PosAff_lag = PosAffect.lag - PosAff_PM;        # definition variable that centers lagged predictor
+Pain ~ intercept@Pain_PM Pain_lag@Pain_AR PosAff_lag@PosAff_CL;                # set level-1 coefficients equal to random intercepts and slopes
+PosAffect ~ intercept@PosAff_PM PosAff_lag@PosAff_AR Pain_lag@Pain_CL;         # set level-1 coefficients equal to random intercepts and slopes
+Pain ~~ PosAffect;     # level-1 residual correlation
+BURN: 10000;
+ITERATIONS: 10000;
+SEED: 90291;
